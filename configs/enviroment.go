@@ -1,4 +1,4 @@
-package services
+package configs
 
 import (
 	"log"
@@ -15,7 +15,7 @@ func Get(key string) string {
 	currentWorkDirectory, _ := os.Getwd()
 	rootPath := projectName.Find([]byte(currentWorkDirectory))
 
-	err := godotenv.Load(string(rootPath) + `/configs/.env`)
+	err := godotenv.Load(string(rootPath) + `/configs/dev.env`)
 
 	if err != nil {
 		log.Fatalf("Error loading .env file")

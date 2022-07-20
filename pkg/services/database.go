@@ -15,6 +15,5 @@ func InitializeDb() {
 		fmt.Println(err.Error())
 		panic(err)
 	}
-	fmt.Println("Paso")
 	migrations.All(db)
 }

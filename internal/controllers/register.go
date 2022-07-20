@@ -3,7 +3,7 @@ package controllers
 import (
 	"time"
 
-	"github.com/backsoul/groot/pkg/services"
+	"github.com/backsoul/groot/configs"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 )
@@ -26,8 +26,9 @@ func ControllerRegister(c *fiber.Ctx) error {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	mySecret := services.Get("JWT_KEY")
-	signedToken, err := token.SignedString(mySecret)
+
+	mySecret := configs.Get("JWT_KEY")
+	signedToken, err := token.SignedString([]byte(mySecret))
 	if err != nil {
 		panic(err)
 	}
