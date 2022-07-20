@@ -1,0 +1,48 @@
+version: '3.5'
+
+services:
+  groot:
+    build: 
+      context: .
+      target: 'groot'
+    volumes:
+     - .:/app
+    ports:
+      - 3000:3000
+    depends_on:
+      - mysqldb
+    networks:
+      - db
+
+  mysqldb:
+    image: mysql:5.5
+    environment:
+      - DB_HOST=mysqldb
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=groot
+      - MYSQL_ROOT_USER=admin
+      - MYSQL_PASSWORD=password
+    networks:
+      - db
+
+
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8030:80
+    environment:
+      - PMA_HOST=mysqldb
+      - UPLOAD_LIMIT=300M
+    networks:
+      - db
+    depends_on:
+      - mysqldb
+
+volumes:
+  mysql_data_db:
+
+
+networks:
+  db:
+    external: true
