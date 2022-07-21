@@ -1,36 +1,52 @@
 package controllers
 
 import (
-	"time"
-
 	"github.com/backsoul/groot/configs"
+	"github.com/backsoul/groot/pkg/models"
+	"github.com/backsoul/groot/pkg/types"
+	"github.com/backsoul/groot/pkg/utils"
+	"github.com/backsoul/groot/pkg/validators"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 )
 
 func ControllerRegister(c *fiber.Ctx) error {
-	type MyCustomClaims struct {
-		Email    string `json:"email"`
-		Birthday int64  `json:"birthday"`
-		jwt.StandardClaims
+	var payload types.PayloadRegisterUser
+	if err := c.BodyParser(&payload); err != nil {
+		c.JSON(fiber.Map{
+			"status": "error",
+			"data":   err.Error(),
+		})
 	}
-
-	// Create the claims
-	claims := MyCustomClaims{
-		"hello@friendsofgo.tech",
-		time.Date(2019, 01, 01, 0, 0, 0, 0, time.UTC).Unix(),
-		jwt.StandardClaims{
-			ExpiresAt: 15000,
-			Issuer:    "Friends of Go",
-		},
+	errors := validators.ValidateStruct(payload)
+	if errors != nil {
+		return c.JSON(fiber.Map{
+			"status": "error",
+			"data":   errors,
+		})
 	}
-
+	claims := types.UserClaims{
+		FirstName:      payload.FirstName,
+		LastName:       payload.LastName,
+		Email:          payload.Email,
+		StandardClaims: jwt.StandardClaims{},
+	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	mySecret := configs.Get("JWT_KEY")
-	signedToken, err := token.SignedString([]byte(mySecret))
+	JwtSecret := configs.Get("JWT_KEY")
+	tokenJwt, err := token.SignedString([]byte(JwtSecret))
 	if err != nil {
 		panic(err)
 	}
-	return c.SendString(signedToken)
+	password, _ := utils.HashPassword(payload.Password)
+	_, err = models.CreateUser(payload.FirstName, payload.LastName, payload.Email, password)
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"status":  "error",
+			"message": "email already exists",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"status": "success",
+		"data":   tokenJwt,
+	})
 }

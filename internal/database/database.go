@@ -1,4 +1,4 @@
-package services
+package database
 
 import (
 	"fmt"
@@ -8,12 +8,19 @@ import (
 	"gorm.io/gorm"
 )
 
+var db = &gorm.DB{}
+
 func InitializeDb() {
 	dsn := "root:password@tcp(mysqldb:3306)/groot?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	cb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db = cb
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)
 	}
-	migrations.All(db)
+	migrations.All(cb)
+}
+
+func DB() *gorm.DB {
+	return db
 }
