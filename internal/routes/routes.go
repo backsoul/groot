@@ -16,8 +16,8 @@ func SetupRoutes(app *fiber.App) {
 
 	// set variables google providers
 	goth.UseProviders(
-		google.New(configs.Get("GOOGLE_CLIENT_ID"), configs.Get("GOOGLE_CLIENT_SECRET"), "http://localhost:3000/auth/callback", "email", "profile"),
-		facebook.New(configs.Get("FACEBOOK_CLIENT_ID"), configs.Get("FACEBOOK_CLIENT_SECRET"), "http://localhost:3000/auth/callback", "email", "profile"),
+		google.New(configs.Get("GOOGLE_CLIENT_ID"), configs.Get("GOOGLE_CLIENT_SECRET"), "https://auth.backsoul.xyz/auth/callback", "email", "profile"),
+		facebook.New(configs.Get("FACEBOOK_CLIENT_ID"), configs.Get("FACEBOOK_CLIENT_SECRET"), "https://auth.backsoul.xyz/auth/callback", "email", "profile"),
 	)
 	app.Get("/auth", goth_fiber.BeginAuthHandler)
 	app.Get("/auth/callback", controllers.ControllerAuthCallback)
