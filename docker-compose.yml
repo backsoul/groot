@@ -10,7 +10,6 @@ services:
     ports:
       - 3000:3000
     networks:
-      - db
       - web
     environment:
       NODE_ENV: production
@@ -22,7 +21,5 @@ services:
 
 
 networks:
-  db:
-    external: true
   web:
     external: true
