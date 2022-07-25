@@ -1,11 +1,12 @@
-FROM golang:1.16-alpine as groot
+FROM golang:1.18-alpine as groot
 WORKDIR /groot
 
-COPY go.mod ./ 
+COPY go.mod .
+COPY go.sum .
 RUN go mod download
 COPY . .
 
 RUN go build -o groot ./cmd/groot/main.go
 
-EXPOSE 3000
+EXPOSE 8000
 CMD ["./groot"]
