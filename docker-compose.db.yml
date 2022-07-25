@@ -3,6 +3,8 @@ version: '3.5'
 services:
   mysqldb:
     image: mysql:5.5
+    ports:
+      - 3306:3306
     environment:
       - DB_HOST=mysqldb
       - MYSQL_ROOT_PASSWORD=password

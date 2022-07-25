@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/backsoul/groot/configs"
+	"github.com/backsoul/groot/pkg/models"
 	"github.com/backsoul/groot/pkg/services"
 	"github.com/backsoul/groot/pkg/types"
 	"github.com/backsoul/groot/pkg/utils"
@@ -57,9 +58,13 @@ func ControllerAuthGoogleProvider(ctx *fiber.Ctx) error {
 	JwtSecret := configs.Get("JWT_KEY")
 	tokenJwt, err := token.SignedString([]byte(JwtSecret))
 	if err != nil {
-		panic(err)
+		return ctx.JSON(fiber.Map{
+			"status":  "error",
+			"message": "Error SignedString",
+			"data":    err.Error(),
+		})
 	}
-	// _, err = models.CreateUser(user.Name, user.Email, "google", user.Picture)
+	_, err = models.CreateUser(user.Name, user.Email, "google", user.Picture)
 	ctx.Cookie(services.AddNewCookie("access_token", tokenJwt, time.Now().Add(24*time.Hour)))
 	return ctx.Redirect("http://localhost:3000", http.StatusTemporaryRedirect)
 }

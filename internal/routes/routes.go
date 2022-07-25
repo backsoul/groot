@@ -20,4 +20,5 @@ func SetupRoutes(app *fiber.App) {
 		SigningKey: []byte(configs.Get("JWT_KEY")),
 	}))
 	api.Get("/me", controllers.Me)
+	api.Get("/refresh", controllers.Refresh)
 }

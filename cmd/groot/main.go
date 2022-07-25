@@ -3,13 +3,14 @@ package main
 import (
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	_ "github.com/backsoul/groot/cmd/groot/docs"
+	"github.com/backsoul/groot/internal/database"
 	"github.com/backsoul/groot/internal/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func main() {
-	// database.InitializeDb()
+	database.InitializeDb()
 	app := fiber.New()
 	app.Get("/swagger/*", swagger.New(swagger.Config{
 		DeepLinking:  false,

@@ -4,13 +4,12 @@ import (
 	"strings"
 
 	"github.com/backsoul/groot/configs"
-	"github.com/backsoul/groot/internal/database"
 	"github.com/backsoul/groot/pkg/types"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 )
 
-func Me(ctx *fiber.Ctx) error {
+func Refresh(ctx *fiber.Ctx) error {
 	accessToken := strings.ReplaceAll(string(ctx.Get("Authorization")), "Bearer ", "")
 	token, err := jwt.ParseWithClaims(accessToken, &types.UserClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(configs.Get("JWT_KEY")), nil
@@ -23,10 +22,21 @@ func Me(ctx *fiber.Ctx) error {
 		})
 	}
 	claims := token.Claims.(*types.UserClaims)
-	user := types.User{}
-	database.DB().Where("Email = ?", claims.Email).First(&user)
+	NewToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	JwtSecret := configs.Get("JWT_KEY")
+	tokenJwt, err := NewToken.SignedString([]byte(JwtSecret))
+	if err != nil {
+		return ctx.JSON(fiber.Map{
+			"status":  "error",
+			"message": "Error SignedString",
+			"data":    err.Error(),
+		})
+	}
 	return ctx.JSON(fiber.Map{
 		"status": "success",
-		"data":   user,
+		"data": fiber.Map{
+			"accessToken":  accessToken,
+			"refreshToken": tokenJwt,
+		},
 	})
 }
