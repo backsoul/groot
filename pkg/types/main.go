@@ -10,8 +10,9 @@ import (
 type User struct {
 	gorm.Model
 	ID        uint `gorm:"primaryKey"`
-	FirstName string
-	LastName  string
+	Provider  string
+	Name      string
+	Picture   string
 	Email     string `gorm:"unique"`
 	Password  string
 	CreatedAt time.Time
@@ -31,8 +32,8 @@ type PayloadLoginUser struct {
 }
 
 type UserClaims struct {
-	FirstName string
-	LastName  string
-	Email     string
+	Picture string
+	Email   string
+	Name    string
 	jwt.StandardClaims
 }

@@ -1,0 +1,19 @@
+info:
+  contact: {}
+paths:
+  /api/v1/sessions/oauth/google:
+    get:
+      description: auth session provider google
+      parameters:
+      - description: token auth provider
+        in: path
+        name: token
+        required: true
+        type: string
+      responses:
+        "307":
+          description: Temporary Redirect
+        "404":
+          description: Not Found
+      summary: provider google
+swagger: "2.0"

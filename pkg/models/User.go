@@ -6,12 +6,12 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateUser(FirstName string, LastName string, Email string, Password string) (tx *gorm.DB, err error) {
+func CreateUser(Name string, Email string, Provider string, Picture string) (tx *gorm.DB, err error) {
 	tx = database.DB().Create(&types.User{
-		FirstName: FirstName,
-		LastName:  FirstName,
-		Email:     Email,
-		Password:  Password,
+		Name:     Name,
+		Email:    Email,
+		Provider: Provider,
+		Picture:  Picture,
 	})
 	if tx.Error != nil {
 		return nil, tx.Error
