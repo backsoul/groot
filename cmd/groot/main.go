@@ -17,7 +17,6 @@ func main() {
 		DocExpansion: "",
 		URL:          "/swagger/doc.json",
 	}))
-	app.Use(cors.New())
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "*",
 		AllowCredentials: true,
