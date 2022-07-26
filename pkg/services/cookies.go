@@ -11,5 +11,8 @@ func AddNewCookie(name string, value string, expires time.Time) *fiber.Cookie {
 	cookie.Name = name
 	cookie.Value = value
 	cookie.Expires = expires
+	cookie.HTTPOnly = true
+	cookie.Domain = "auth.backsoul.xyz"
+	cookie.Path = "/"
 	return cookie
 }
