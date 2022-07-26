@@ -5,6 +5,7 @@ package controllers
 // @host http://localhost:8000/api/sessions/oauth/google
 // @BasePath /api
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -31,6 +32,10 @@ type Payload struct {
 func ControllerAuthGoogleProvider(ctx *fiber.Ctx) error {
 	var payload Payload
 	payload.Code = ctx.Query("code")
+
+	fmt.Printf("---------------------------")
+	fmt.Printf(payload.Code)
+	fmt.Printf("---------------------------")
 	tokenRes, err := utils.GetGoogleOauthToken(payload.Code)
 	if err != nil {
 		return ctx.JSON(fiber.Map{
