@@ -18,10 +18,10 @@ func main() {
 		URL:          "/swagger/doc.json",
 	}))
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "https://social.backsoul.xyz/,*",
+		AllowOrigins:     "*",
 		AllowCredentials: true,
-		AllowHeaders:     "Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers",
-		AllowMethods:     "POST,PATCH",
+		AllowHeaders:     "*",
+		AllowMethods:     "POST,GET,PUT,DELETE,OPTIONS",
 	}))
 	routes.SetupRoutes(app)
 	app.Listen(":8000")
