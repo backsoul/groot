@@ -66,6 +66,6 @@ func ControllerAuthGoogleProvider(ctx *fiber.Ctx) error {
 	}
 	_, err = models.CreateUser(user.Name, user.Email, "google", user.Picture)
 	ctx.Cookie(services.AddNewCookie("access_token", tokenJwt, time.Now().Add(24*time.Hour)))
-	url := "http://localhost:3000/login?token=" + tokenJwt
+	url := configs.Get("REDIRECT_URL") + "?token=" + tokenJwt
 	return ctx.Redirect(url, http.StatusTemporaryRedirect)
 }
