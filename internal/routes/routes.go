@@ -1,10 +1,8 @@
 package routes
 
 import (
-	"github.com/backsoul/groot/configs"
 	"github.com/backsoul/groot/internal/controllers"
 	"github.com/gofiber/fiber/v2"
-	jwtware "github.com/gofiber/jwt/v3"
 )
 
 func SetupRoutes(app *fiber.App) {
@@ -15,10 +13,6 @@ func SetupRoutes(app *fiber.App) {
 		return nil
 	})
 	api.Get("/sessions/oauth/google", controllers.ControllerAuthGoogleProvider)
-	// JWT Middleware
-	api.Use(jwtware.New(jwtware.Config{
-		SigningKey: []byte(configs.Get("JWT_KEY")),
-	}))
-	api.Get("/me", controllers.Me)
-	api.Get("/refresh", controllers.Refresh)
+
+	api.Post("/me", controllers.Me)
 }

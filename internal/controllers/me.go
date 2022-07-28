@@ -1,32 +1,24 @@
 package controllers
 
 import (
-	"strings"
+	"encoding/json"
 
-	"github.com/backsoul/groot/configs"
 	"github.com/backsoul/groot/internal/database"
 	"github.com/backsoul/groot/pkg/types"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt"
 )
 
 func Me(ctx *fiber.Ctx) error {
-	accessToken := strings.ReplaceAll(string(ctx.Get("Authorization")), "Bearer ", "")
-	token, err := jwt.ParseWithClaims(accessToken, &types.UserClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(configs.Get("JWT_KEY")), nil
-	})
-	if err != nil {
-		return ctx.JSON(fiber.Map{
-			"status":  "error",
-			"message": "Errot parse jwt",
-			"data":    err.Error(),
-		})
-	}
-	claims := token.Claims.(*types.UserClaims)
-	user := types.User{}
-	database.DB().Where("Email = ?", claims.Email).First(&user)
+	var payload map[string]interface{}
+	json.Unmarshal([]byte(ctx.Body()), &payload)
+
+	payloadJson, _ := json.Marshal(payload["user"])
+	var user types.UserClaims
+	json.Unmarshal([]byte(payloadJson), &user)
+	User := types.User{}
+	database.DB().Where("Email = ?", user.Email).First(&User)
 	return ctx.JSON(fiber.Map{
 		"status": "success",
-		"data":   user,
+		"data":   User,
 	})
 }
