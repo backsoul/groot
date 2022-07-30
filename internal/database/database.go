@@ -11,7 +11,7 @@ import (
 var db = &gorm.DB{}
 
 func InitializeDb() {
-	dsn := "root:password@tcp(web:3306)/groot?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:password@tcp(mysqldb:3306)/groot?charset=utf8mb4&parseTime=True&loc=Local"
 	cb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	db = cb
 	if err != nil {
