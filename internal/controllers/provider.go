@@ -49,10 +49,12 @@ func ControllerAuthGoogleProvider(ctx *fiber.Ctx) error {
 	}
 
 	claims := types.UserClaims{
-		Name:           user.Name,
-		Email:          user.Email,
-		Picture:        user.Picture,
-		StandardClaims: jwt.StandardClaims{},
+		Name:    user.Name,
+		Email:   user.Email,
+		Picture: user.Picture,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Second * 15).Unix(),
+		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	JwtSecret := configs.Get("JWT_KEY")
