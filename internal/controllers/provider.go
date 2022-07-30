@@ -53,7 +53,7 @@ func ControllerAuthGoogleProvider(ctx *fiber.Ctx) error {
 		Email:   user.Email,
 		Picture: user.Picture,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Second * 15).Unix(),
+			ExpiresAt: time.Now().Add(time.Minute * 15).Unix(),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
