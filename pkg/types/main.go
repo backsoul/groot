@@ -9,7 +9,7 @@ import (
 
 type User struct {
 	gorm.Model
-	ID        uint `gorm:"primaryKey"`
+	ID        string `gorm:"primaryKey"`
 	Provider  string
 	Name      string
 	Picture   string
@@ -22,5 +22,6 @@ type UserClaims struct {
 	Picture string
 	Email   string
 	Name    string
+	Id      string
 	jwt.StandardClaims
 }

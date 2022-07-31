@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/backsoul/groot/configs"
+	"github.com/backsoul/groot/internal/database"
 	"github.com/backsoul/groot/pkg/models"
 	"github.com/backsoul/groot/pkg/services"
 	"github.com/backsoul/groot/pkg/types"
@@ -48,10 +49,15 @@ func ControllerAuthGoogleProvider(ctx *fiber.Ctx) error {
 		})
 	}
 
+	_, err = models.CreateUser(user.Name, user.Email, "google", user.Picture)
+	User := types.User{}
+	database.DB().Where("Email = ?", user.Email).First(&User)
+
 	claims := types.UserClaims{
-		Name:    user.Name,
-		Email:   user.Email,
-		Picture: user.Picture,
+		Name:    User.Name,
+		Email:   User.Email,
+		Picture: User.Picture,
+		Id:      User.ID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Minute * 15).Unix(),
 		},
@@ -66,7 +72,7 @@ func ControllerAuthGoogleProvider(ctx *fiber.Ctx) error {
 			"data":    err.Error(),
 		})
 	}
-	_, err = models.CreateUser(user.Name, user.Email, "google", user.Picture)
+
 	ctx.Cookie(services.AddNewCookie("access_token", tokenJwt, time.Now().Add(24*time.Hour)))
 	url := configs.Get("REDIRECT_URL") + "?token=" + tokenJwt
 	return ctx.Redirect(url, http.StatusTemporaryRedirect)
