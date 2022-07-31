@@ -14,9 +14,9 @@ services:
     environment:
       NODE_ENV: production
       TZ: America/Bogota
-      VIRTUAL_HOST: auth.backsoul.xyz
+      VIRTUAL_HOST: groot.backsoul.dev
       VIRTUAL_PORT: 8000
-      LETSENCRYPT_HOST: auth.backsoul.xyz
+      LETSENCRYPT_HOST: groot.backsoul.dev
       LETSENCRYPT_EMAIL: danielsarmientoenterprise@gmail.com
 
 
