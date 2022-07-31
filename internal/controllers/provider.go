@@ -5,6 +5,7 @@ package controllers
 // @host http://localhost:8000/api/sessions/oauth/google
 // @BasePath /api
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -16,6 +17,7 @@ import (
 	"github.com/backsoul/groot/pkg/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
+	uuid "github.com/nu7hatch/gouuid"
 )
 
 type Payload struct {
@@ -48,8 +50,9 @@ func ControllerAuthGoogleProvider(ctx *fiber.Ctx) error {
 			"data":    err.Error(),
 		})
 	}
-
-	_, err = models.CreateUser(user.Name, user.Email, "google", user.Picture)
+	u, err := uuid.NewV4()
+	uuid := fmt.Sprintf("%v", u)
+	_, err = models.CreateUser(uuid, user.Name, user.Email, "google", user.Picture)
 	User := types.User{}
 	database.DB().Where("Email = ?", user.Email).First(&User)
 

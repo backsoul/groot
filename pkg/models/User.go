@@ -6,8 +6,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateUser(Name string, Email string, Provider string, Picture string) (tx *gorm.DB, err error) {
+func CreateUser(Uuid string, Name string, Email string, Provider string, Picture string) (tx *gorm.DB, err error) {
 	tx = database.DB().Create(&types.User{
+		ID:       Uuid,
 		Name:     Name,
 		Email:    Email,
 		Provider: Provider,
