@@ -5,6 +5,8 @@ package controllers
 // @host http://localhost:8000/api/sessions/oauth/google
 // @BasePath /api
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -50,10 +52,19 @@ func ControllerAuthGoogleProvider(ctx *fiber.Ctx) error {
 			"data":    err.Error(),
 		})
 	}
-	u, err := uuid.NewV4()
+	u, _ := uuid.NewV4()
 	uuid := fmt.Sprintf("%v", u)
-	_, err = models.CreateUser(uuid, user.Name, user.Email, "google", user.Picture)
+	_, _ = models.CreateUser(uuid, user.Name, user.Email, "google", user.Picture)
+	//TODO: valid if exist user
+	// if err != nil {
+	// 	return ctx.JSON(fiber.Map{
+	// 		"status":  "error",
+	// 		"message": "Error CreateUser",
+	// 		"data":    err.Error(),
+	// 	})
+	// }
 	User := types.User{}
+
 	database.DB().Where("Email = ?", user.Email).First(&User)
 
 	claims := types.UserClaims{
@@ -65,13 +76,47 @@ func ControllerAuthGoogleProvider(ctx *fiber.Ctx) error {
 			ExpiresAt: time.Now().Add(time.Minute * 15).Unix(),
 		},
 	}
+
+	type PayloadWallet struct {
+		Payload interface{}
+		User    types.UserClaims
+	}
+	var payloadWallet PayloadWallet
+	var payloadEmpty interface{}
+	payloadWallet.User = claims
+	payloadWallet.Payload = payloadEmpty
+
+	fmt.Println(payloadWallet)
+	byts, _ := json.Marshal(payloadWallet)
+	req, err := http.NewRequest("POST", "http://finance:8086/api/v1/wallet/create", bytes.NewBuffer(byts))
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return ctx.JSON(fiber.Map{
+			"status":  "error",
+			"message": "Error microservice finance",
+			"data":    err.Error(),
+		})
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return ctx.JSON(fiber.Map{
+			"status":  "error",
+			"message": "Error client creating wallet",
+			"data":    err.Error(),
+		})
+	}
+	defer resp.Body.Close()
+
+	defer resp.Body.Close()
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	JwtSecret := configs.Get("JWT_KEY")
 	tokenJwt, err := token.SignedString([]byte(JwtSecret))
 	if err != nil {
 		return ctx.JSON(fiber.Map{
 			"status":  "error",
-			"message": "Error SignedString",
+			"message": "Error Create JWT TOKEN",
 			"data":    err.Error(),
 		})
 	}

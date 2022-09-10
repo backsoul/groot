@@ -18,7 +18,7 @@ func Get(key string) string {
 	err := godotenv.Load(string(rootPath) + `/configs/dev.env`)
 
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Fatalf(err.Error())
 	}
 	// return the env variable using os package
 	return os.Getenv(key)
