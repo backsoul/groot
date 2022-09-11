@@ -77,16 +77,8 @@ func ControllerAuthGoogleProvider(ctx *fiber.Ctx) error {
 		},
 	}
 
-	type PayloadWallet struct {
-		Payload interface{}
-		User    types.UserClaims
-	}
-	var payloadWallet PayloadWallet
-	var payloadEmpty interface{}
-	payloadWallet.User = claims
-	payloadWallet.Payload = payloadEmpty
+	payloadWallet := map[string]interface{}{"payload": "jsonBody", "user": claims}
 
-	fmt.Println(payloadWallet)
 	byts, _ := json.Marshal(payloadWallet)
 	req, err := http.NewRequest("POST", "http://finance:8086/api/v1/wallet/create", bytes.NewBuffer(byts))
 	req.Header.Set("Content-Type", "application/json")
